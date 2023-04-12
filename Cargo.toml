@@ -1,0 +1,49 @@
+[package]
+name = "rust_rest_api"
+version = "0.1.0"
+authors = ["Zoltán Tüskés <zoltan.tuskes@olavstoppen.no>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4"
+image = "0.24.5"
+base64 = "0.13.0" # we use 0.13.0 in dev...
+actix = "0.13.0"
+actix-web = "4.3.1"
+actix-service = "2.0"
+actix-cors = "0.6.4"
+actix-rt = "2.8.0"
+actix-web-actors = "4.2.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sled = "0.34.7"
+jsonwebtoken = "8.0.1"
+futures = "0.3"
+dotenv = "0.15.0"
+lazy_static = "1.4.0"
+rand = "0.8.4"
+argon2 = "0.5.0"
+env_logger = "0.10.0"
+rand_core = { version = "0.6.4", features = ["std"] }
+colored = "2.0.0"
+actix-multipart = "0.6.0"
+tokio = { version = "1.27.0", features = ["full"] }
+
+# in the example app we use the v4 Uuid features
+# See more their definitions at: https://docs.rs/uuid/latest/uuid/ 
+[dependencies.uuid]
+version = "1.3.0"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
+
+[profile.release]
+strip = true
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
