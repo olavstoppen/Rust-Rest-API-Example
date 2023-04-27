@@ -25,10 +25,10 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
     let config = Config::init();
 
-    let db_users = match db::db::init_sled_user_db() {
+    let db_users = match db::database::init_sled_user_db() {
         Ok(db_users) => db_users,
         Err(e) => {
-            eprintln!("Failed to initialize user database: {}", e);
+            eprintln!("Failed to initialize user database: {e}");
             // Exit if user DB has error
             std::process::exit(1);
         }

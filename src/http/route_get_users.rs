@@ -25,12 +25,11 @@ fn fetch_users_from_db(
     let mut users = Vec::new();
 
    // Calculate the start and end indices of the current page
-   let start_index = 1 * 20;
+   let start_index = 20;
    let end_index = (1 + 1) * 20;
 
    // Iterate over the entries in the user table and collect the current page of users
-   let mut current_index = 0;
-   for entry in user_table.iter() {
+   for (current_index, entry) in user_table.iter().enumerate(){
        if current_index >= start_index && current_index < end_index {
            let (_, user_bytes) = entry?;
            let user: User = serde_json::from_slice(&user_bytes)?;
@@ -38,13 +37,11 @@ fn fetch_users_from_db(
        } else if current_index >= end_index {
            break;
        }
-
-       current_index += 1;
    }
 
    let result_users = Users {
        user_count: users.len() as i32,
-       users: users,
+       users,
    };
 
     Ok(result_users)

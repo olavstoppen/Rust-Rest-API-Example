@@ -80,6 +80,6 @@ pub async fn refresh_token_handler(
     
     Ok(HttpResponse::Ok()
         .append_header(("Refresh-Token", refresh_token))
-        .append_header((header::AUTHORIZATION, format!("Bearer {}", access_token)))
+        .append_header((header::AUTHORIZATION, format!("Bearer {access_token}")))
         .json(json!({"success:": true,  "message": "Done" })))
 }

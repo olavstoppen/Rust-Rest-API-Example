@@ -10,14 +10,13 @@ use std::path::Path;
 pub async fn save_image(config: &Config, image_bytes: Vec<u8>, new_width: u32) -> String {
     let current_year = chrono::Utc::now().year();
     let current_month = format!("{:02}", Utc::now().month());
-    let folder_path = format!("images/{}/{}", current_year, current_month);
-    let filename = format!("{}.jpg", uuid::Uuid::new_v4().to_string());
-    if !Path::new(&folder_path).exists() {
-        if let Err(_) = std::fs::create_dir_all(&folder_path) {
-            return config.url_default_images.to_owned();
-        }
+    let folder_path = format!("images/{current_year}/{current_month}");
+    let filename = format!("{}.jpg", uuid::Uuid::new_v4());
+    if !Path::new(&folder_path).exists() && std::fs::create_dir_all(&folder_path).is_err() {
+        return config.url_default_images.to_owned();
     }
-    let mut file_path = folder_path.clone();
+
+    let mut file_path = folder_path;
     file_path.push('/');
     file_path.push_str(&filename);
 
@@ -39,7 +38,7 @@ pub async fn save_image(config: &Config, image_bytes: Vec<u8>, new_width: u32) -
         }
     };
 
-    if let Err(_) = resized_image.write_to(&mut f, ImageOutputFormat::Jpeg(80)) {
+    if resized_image.write_to(&mut f, ImageOutputFormat::Jpeg(80)).is_err() {
         return config.url_default_images.to_owned();
     }
 
@@ -50,13 +49,14 @@ pub async fn save_image(config: &Config, image_bytes: Vec<u8>, new_width: u32) -
             return config.url_default_images.to_owned();
         }
     };
-    if let Err(_) = f.seek(SeekFrom::Start(file_length + 4)) {
+    if f.seek(SeekFrom::Start(file_length + 4)).is_err() {
         return config.url_default_images.to_owned();
     }
-    if let Err(_) = f.sync_all() {
+    if f.sync_all().is_err() {
         return config.url_default_images.to_owned();
     }
-    return format!("http://127.0.0.1:8484/{}",file_path)
+    
+    format!("http://127.0.0.1:8484/{file_path}")
     
 }
 

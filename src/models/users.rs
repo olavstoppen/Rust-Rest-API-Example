@@ -21,32 +21,18 @@ impl User {
             PasswordHash::new(&self.password).expect("Failed to parse stored password hash");
         let argon2 = Argon2::default();
 
-        match argon2.verify_password(password.as_bytes(), &parsed_hash) {
-            Ok(_) => true,
-            Err(_) => false,
-        }
+        argon2.verify_password(password.as_bytes(), &parsed_hash).is_ok()
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
+#[derive()]
 pub struct UserData {
     pub instagram: String,
     pub twitter: String,
     pub tiktok: String,
     pub facebook: String,
     pub description: String,
-}
-
-impl Default for UserData {
-    fn default() -> Self {
-        Self {
-            instagram: String::new(),
-            twitter: String::new(),
-            tiktok: String::new(),
-            facebook: String::new(),
-            description: String::new(),
-        }
-    }
 }
 
 // When we response user we send back UserResponse
@@ -99,7 +85,7 @@ pub struct UpdateUserResponse {
 
 impl UpdateUserResponse {
     pub fn new(message: String, user: UserResponse) -> Self {
-        UpdateUserResponse { message: message , user: user }
+        UpdateUserResponse { message , user }
     }
 }
 

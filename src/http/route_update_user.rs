@@ -131,7 +131,7 @@ async fn update_user_in_db(
             user.profile_image_url
         };
 
-        if !image_path.contains("default") && new_image_generate == true {
+        if !image_path.contains("default") && new_image_generate {
             if let Some(profile_image_orig) = &update_user_request.profile_image_url {
                 let oldpath = profile_image_orig.replace(config.url_images.as_str(), "images/");
                 let _ = image::delete_profile_image(&oldpath);
@@ -155,9 +155,9 @@ async fn update_user_in_db(
 
         Ok(resp)
     } else {
-        return Err(Box::new(std::io::Error::new(
+        Err(Box::new(std::io::Error::new(
             std::io::ErrorKind::NotFound,
             "User not found",
-        )));
+        )))
     }
 }

@@ -111,7 +111,7 @@ async fn save_user_in_db(
     new_user_request: NewUser,
     imf: Option<Vec<u8>>,
 ) -> Result<UserResponse, Box<dyn Error>> {
-    let user_table = db.open_tree(&config.user_table.as_str())?;
+    let user_table = db.open_tree(config.user_table.as_str())?;
     let username_index_table = db.open_tree(&config.username_index_table).unwrap();
     let email_index_table = db.open_tree(&config.email_index_table).unwrap();
 
@@ -124,7 +124,7 @@ async fn save_user_in_db(
         .to_string();
 
     // Check if the user_id already exists in the database
-    if user_table.contains_key(&user_uuid)? {
+    if user_table.contains_key(user_uuid)? {
         return Err(Box::new(std::io::Error::new(
             std::io::ErrorKind::InvalidData,
             "User exists!",
@@ -152,13 +152,13 @@ async fn save_user_in_db(
         email: new_user_request.email,
         password: password_hash,
         salt: salt.to_string(),
-        profile_image_url: image_path.clone(),
+        profile_image_url: image_path,
         user_data,
     };
 
     let user_bytes = serde_json::to_vec(&new_user)?;
-    user_table.insert(String::from(user_uuid.clone()), user_bytes)?;
-    username_index_table.insert(new_user.username.clone().as_bytes(), user_uuid.as_bytes()).unwrap();
+    user_table.insert(user_uuid.clone(), user_bytes)?;
+    username_index_table.insert(new_user.username.as_bytes(), user_uuid.as_bytes()).unwrap();
     email_index_table.insert(new_user.email.as_bytes(), user_uuid.as_bytes()).unwrap();
 
     let resp = UserResponse::new(

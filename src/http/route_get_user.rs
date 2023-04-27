@@ -31,8 +31,8 @@ fn fetch_user_from_db(
 ) -> Result<UserResponse, Box<dyn Error>> {
     let user_table = db.open_tree(config.user_table.as_str())?;
 
-    let key = format!("{}", user_id);
-    let user_bytes = user_table.get(&key)?;
+    let key = user_id.to_string();
+    let user_bytes = user_table.get(key)?;
 
     match user_bytes {
         Some(data) => {
